@@ -57,13 +57,14 @@ function createEnemy(type, tileX, tileY) {
  * Create a boss.
  */
 function createBoss(playerCount) {
+  const tile = getRandomFloorTile(GAME_MAP);
   return {
     id: ++enemyIdCounter,
     type: 'boss',
     name: 'Dungeon Lord',
     color: '#ff2200',
-    x: 20 * 32 + 16,   // Center of map
-    y: 12 * 32 + 16,
+    x: tile.x * 32 + 16,
+    y: tile.y * 32 + 16,
     radius: 24,
     hp: 400 + (playerCount * 100),
     maxHp: 400 + (playerCount * 100),
@@ -214,20 +215,37 @@ function clampToMap(entity, map) {
 
 /**
  * Get random walkable tile positions for spawning.
+ * Ensures the tile AND all 8 neighbours are floor (not wall)
+ * so that enemies with radius never overlap obstacles.
  */
 function getRandomFloorTile(map) {
   const rows = map.length;
   const cols = map[0].length;
-  let attempts = 100;
+  let attempts = 200;
   while (attempts-- > 0) {
     const tx = Math.floor(Math.random() * cols);
     const ty = Math.floor(Math.random() * rows);
-    if (map[ty][tx] === 0) {
-      // Don't spawn too close to edges
-      if (tx > 1 && tx < cols - 2 && ty > 1 && ty < rows - 2) {
-        return { x: tx, y: ty };
-      }
+    // Don't spawn too close to edges
+    if (tx < 2 || tx >= cols - 2 || ty < 2 || ty >= rows - 2) continue;
+    // Check that this tile and all 8 surrounding tiles are floor
+    if (isClearSpawn(tx, ty, map)) {
+      return { x: tx, y: ty };
     }
   }
   return { x: 10, y: 10 }; // Fallback
+}
+
+/**
+ * Check that the tile at (tx,ty) and all 8 neighbours are floor (value 0).
+ */
+function isClearSpawn(tx, ty, map) {
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      const r = ty + dy;
+      const c = tx + dx;
+      if (r < 0 || r >= map.length || c < 0 || c >= map[0].length) return false;
+      if (map[r][c] !== 0) return false;
+    }
+  }
+  return true;
 }
