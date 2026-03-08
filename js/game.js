@@ -66,12 +66,28 @@ const ASSETS = {
   chest: new Image(),
   trap: new Image(),
   wallTile: new Image(),
-  floorTile: new Image()
+  floorTile: new Image(),
+  boss: new Image(),
+  brute: new Image(),
+  goblin: new Image(),
+  skeleton: new Image(),
+  rogue: new Image(),
+  mage: new Image(),
+  ranger: new Image(),
+  warrior: new Image()
 };
 ASSETS.chest.src = 'Chest.png';
 ASSETS.trap.src = 'Trap.png';
 ASSETS.wallTile.src = 'Wall Tile.png';
 ASSETS.floorTile.src = 'Floor Tile.png';
+ASSETS.boss.src = 'Boss (Dungeon Lord).png';
+ASSETS.brute.src = 'Brute.png';
+ASSETS.goblin.src = 'Goblin.png';
+ASSETS.skeleton.src = 'Skeleton.png';
+ASSETS.rogue.src = 'Rogue.png';
+ASSETS.mage.src = 'Mage.png';
+ASSETS.ranger.src = 'Ranger.png';
+ASSETS.warrior.src = 'Warrior.png';
 
 // ========================================
 // INITIALIZATION
