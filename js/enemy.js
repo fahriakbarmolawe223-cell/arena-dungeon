@@ -50,7 +50,8 @@ function createEnemy(type, tileX, tileY) {
     knockbackX: 0,
     knockbackY: 0,
     hitFlash: 0,
-    facingX: 1
+    facingX: 0,
+    facingY: 1
   };
 }
 
@@ -89,7 +90,8 @@ function createBoss(playerCount) {
     aoeCd: 5,
     aoeTimer: 0,
     aoeWarning: 0,
-    facingX: 1
+    facingX: 0,
+    facingY: 1
   };
 }
 
@@ -149,7 +151,11 @@ function updateEnemy(enemy, players, dt, map) {
     const dx = nearest.x - enemy.x;
     const dy = nearest.y - enemy.y;
 
-    enemy.facingX = dx < 0 ? -1 : 1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len > 0) {
+      enemy.facingX = dx / len;
+      enemy.facingY = dy / len;
+    }
     const spd = enemy.speed * (enemy.slowed ? (1 - enemy.slowAmount) : 1);
     const mx = (dx / nearestDist) * spd * dt * 60;
     const my = (dy / nearestDist) * spd * dt * 60;
