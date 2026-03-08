@@ -360,7 +360,7 @@ function renderEnemyEntities() {
       ctx.save();
       ctx.translate(e.x, e.y);
       const angle = Math.atan2(e.facingY || 0, e.facingX || 0);
-      ctx.rotate(angle - Math.PI / 2);
+      ctx.rotate(angle + Math.PI / 2);
       ctx.drawImage(ASSETS[e.type], -imgSize / 2, -imgSize / 2, imgSize, imgSize);
       ctx.restore();
 
@@ -397,7 +397,7 @@ function renderBossEntity() {
     ctx.save();
     ctx.translate(boss.x, boss.y);
     const angle = Math.atan2(boss.facingY || 0, boss.facingX || 0);
-    ctx.rotate(angle - Math.PI / 2);
+    ctx.rotate(angle + Math.PI / 2);
     ctx.drawImage(ASSETS.boss, -32, -32, 64, 64);
     ctx.restore();
 
@@ -440,7 +440,7 @@ function renderPlayerEntities() {
       ctx.save();
       ctx.translate(p.x, p.y);
       const angle = Math.atan2(p.facingY || 0, p.facingX || 0);
-      ctx.rotate(angle - Math.PI / 2);
+      ctx.rotate(angle + Math.PI / 2);
       ctx.drawImage(ASSETS[p.className], -16, -16, 32, 32);
       ctx.restore();
 
