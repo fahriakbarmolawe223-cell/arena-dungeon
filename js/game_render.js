@@ -357,7 +357,11 @@ function renderEnemyEntities() {
     
     if (ASSETS[e.type] && ASSETS[e.type].complete && ASSETS[e.type].naturalWidth) {
       let imgSize = e.type === 'brute' ? 40 : 32;
-      ctx.drawImage(ASSETS[e.type], e.x - imgSize/2, e.y - imgSize/2, imgSize, imgSize);
+      ctx.save();
+      ctx.translate(e.x, e.y);
+      if (e.facingX < 0) ctx.scale(-1, 1);
+      ctx.drawImage(ASSETS[e.type], -imgSize/2, -imgSize/2, imgSize, imgSize);
+      ctx.restore();
       
       if (e.hitFlash > 0) {
         ctx.fillStyle = 'rgba(255,255,255,0.6)';
@@ -389,7 +393,12 @@ function renderBossEntity() {
   }
   
   if (ASSETS.boss && ASSETS.boss.complete && ASSETS.boss.naturalWidth) {
-    ctx.drawImage(ASSETS.boss, boss.x - 32, boss.y - 32, 64, 64);
+    ctx.save();
+    ctx.translate(boss.x, boss.y);
+    if (boss.facingX < 0) ctx.scale(-1, 1);
+    ctx.drawImage(ASSETS.boss, -32, -32, 64, 64);
+    ctx.restore();
+
     if (boss.hitFlash > 0) {
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.beginPath();
