@@ -292,19 +292,27 @@ function renderMap() {
     for (let c = 0; c < MAP_COLS; c++) {
       const x = c * TILE, y = r * TILE;
       if (GAME_MAP[r][c] === 1) {
-        ctx.fillStyle = '#3a2a1a';
-        ctx.fillRect(x, y, TILE, TILE);
-        // Stone texture
-        ctx.fillStyle = '#4a3a2a';
-        ctx.fillRect(x + 1, y + 1, TILE - 2, TILE - 2);
-        ctx.fillStyle = '#3a2a1a';
-        ctx.fillRect(x + 2, y + TILE / 2, TILE - 4, 1);
-        ctx.fillRect(x + TILE / 2, y + 2, 1, TILE - 4);
+        if (ASSETS.wallTile.complete && ASSETS.wallTile.naturalWidth) {
+          ctx.drawImage(ASSETS.wallTile, x, y, TILE, TILE);
+        } else {
+          ctx.fillStyle = '#3a2a1a';
+          ctx.fillRect(x, y, TILE, TILE);
+          // Stone texture
+          ctx.fillStyle = '#4a3a2a';
+          ctx.fillRect(x + 1, y + 1, TILE - 2, TILE - 2);
+          ctx.fillStyle = '#3a2a1a';
+          ctx.fillRect(x + 2, y + TILE / 2, TILE - 4, 1);
+          ctx.fillRect(x + TILE / 2, y + 2, 1, TILE - 4);
+        }
       } else {
-        ctx.fillStyle = '#1e1612';
-        ctx.fillRect(x, y, TILE, TILE);
-        ctx.fillStyle = '#241a16';
-        ctx.fillRect(x + 1, y + 1, TILE - 2, TILE - 2);
+        if (ASSETS.floorTile.complete && ASSETS.floorTile.naturalWidth) {
+          ctx.drawImage(ASSETS.floorTile, x, y, TILE, TILE);
+        } else {
+          ctx.fillStyle = '#1e1612';
+          ctx.fillRect(x, y, TILE, TILE);
+          ctx.fillStyle = '#241a16';
+          ctx.fillRect(x + 1, y + 1, TILE - 2, TILE - 2);
+        }
       }
     }
   }
@@ -312,24 +320,34 @@ function renderMap() {
 
 function renderChests() {
   for (const c of chests) {
-    ctx.fillStyle = '#8B6914';
-    ctx.fillRect(c.x - 8, c.y - 6, 16, 12);
-    ctx.fillStyle = '#D4A017';
-    ctx.fillRect(c.x - 7, c.y - 5, 14, 10);
-    ctx.fillStyle = '#FFD700';
-    ctx.fillRect(c.x - 2, c.y - 2, 4, 4);
+    if (ASSETS.chest.complete && ASSETS.chest.naturalWidth) {
+      // Draw 32x32 image centered at c.x, c.y
+      ctx.drawImage(ASSETS.chest, c.x - 16, c.y - 16, 32, 32);
+    } else {
+      ctx.fillStyle = '#8B6914';
+      ctx.fillRect(c.x - 8, c.y - 6, 16, 12);
+      ctx.fillStyle = '#D4A017';
+      ctx.fillRect(c.x - 7, c.y - 5, 14, 10);
+      ctx.fillStyle = '#FFD700';
+      ctx.fillRect(c.x - 2, c.y - 2, 4, 4);
+    }
   }
 }
 
 function renderTraps() {
   for (const t of traps) {
-    ctx.beginPath();
-    ctx.arc(t.x, t.y, 6, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,170,0,0.4)';
-    ctx.fill();
-    ctx.strokeStyle = '#ffaa00';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    if (ASSETS.trap.complete && ASSETS.trap.naturalWidth) {
+      // Draw 32x32 image centered at t.x, t.y
+      ctx.drawImage(ASSETS.trap, t.x - 16, t.y - 16, 32, 32);
+    } else {
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,170,0,0.4)';
+      ctx.fill();
+      ctx.strokeStyle = '#ffaa00';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
   }
 }
 
