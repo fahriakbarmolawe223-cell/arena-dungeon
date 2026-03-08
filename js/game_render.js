@@ -354,17 +354,16 @@ function renderTraps() {
 function renderEnemyEntities() {
   for (const e of enemies) {
     if (e.dead) continue;
-    
+
     if (ASSETS[e.type] && ASSETS[e.type].complete && ASSETS[e.type].naturalWidth) {
       let imgSize = e.type === 'brute' ? 40 : 32;
       ctx.save();
       ctx.translate(e.x, e.y);
-      if (e.facingX < 0) {
-        ctx.scale(-1, 1);
-      }
-      ctx.drawImage(ASSETS[e.type], -imgSize/2, -imgSize/2, imgSize, imgSize);
+      const angle = Math.atan2(e.facingY || 0, e.facingX || 0);
+      ctx.rotate(angle - Math.PI / 2);
+      ctx.drawImage(ASSETS[e.type], -imgSize / 2, -imgSize / 2, imgSize, imgSize);
       ctx.restore();
-      
+
       if (e.hitFlash > 0) {
         ctx.fillStyle = 'rgba(255,255,255,0.6)';
         ctx.beginPath();
@@ -393,13 +392,12 @@ function renderBossEntity() {
     ctx.fillStyle = 'rgba(255,50,0,' + (boss.aoeWarning * 0.3) + ')';
     ctx.fill();
   }
-  
+
   if (ASSETS.boss && ASSETS.boss.complete && ASSETS.boss.naturalWidth) {
     ctx.save();
     ctx.translate(boss.x, boss.y);
-    if (boss.facingX < 0) {
-      ctx.scale(-1, 1);
-    }
+    const angle = Math.atan2(boss.facingY || 0, boss.facingX || 0);
+    ctx.rotate(angle - Math.PI / 2);
     ctx.drawImage(ASSETS.boss, -32, -32, 64, 64);
     ctx.restore();
 
@@ -418,7 +416,7 @@ function renderBossEntity() {
     ctx.lineWidth = 3;
     ctx.stroke();
   }
-  
+
   drawHealthBar(ctx, boss.x, boss.y - boss.radius - 12, 50, 5, boss.hp, boss.maxHp, '#ff2200');
   drawNameLabel(ctx, boss.x, boss.y - boss.radius - 16, boss.name, '#ff4444');
 }
@@ -436,17 +434,16 @@ function renderPlayerEntities() {
       ctx.lineWidth = 2;
       ctx.stroke();
     }
-    
+
     // Player body
     if (ASSETS[p.className] && ASSETS[p.className].complete && ASSETS[p.className].naturalWidth) {
       ctx.save();
       ctx.translate(p.x, p.y);
-      if (p.facingX < 0) {
-        ctx.scale(-1, 1);
-      }
+      const angle = Math.atan2(p.facingY || 0, p.facingX || 0);
+      ctx.rotate(angle - Math.PI / 2);
       ctx.drawImage(ASSETS[p.className], -16, -16, 32, 32);
       ctx.restore();
-      
+
       if (p.invincible) {
         ctx.fillStyle = 'rgba(255,255,255,0.6)';
         ctx.beginPath();
@@ -467,7 +464,7 @@ function renderPlayerEntities() {
       ctx.arc(p.x + p.facingX * 7, p.y + p.facingY * 7, 3, 0, Math.PI * 2);
       ctx.fill();
     }
-    
+
     ctx.globalAlpha = 1;
     drawHealthBar(ctx, p.x, p.y - p.radius - 10, 26, 4, p.hp, p.maxHp, p.color);
     drawNameLabel(ctx, p.x, p.y - p.radius - 14, p.name + ' Lv' + p.level, p.color);
