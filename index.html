@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arena Dungeon — Host</title>
+  <meta name="description" content="Arena Dungeon: A multiplayer dungeon arena RPG. Host the game on your PC and have players join with their phones!">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- LOBBY -->
+  <div id="lobby">
+    <h1>⚔ Arena Dungeon ⚔</h1>
+    <p class="subtitle">Scan the QR code with your phone to join</p>
+    <div id="qr-container"></div>
+    <div id="room-code"><span>ROOM CODE</span>...</div>
+    <p id="connection-status">Connecting to signaling server...</p>
+    <div id="player-list"></div>
+    <p id="player-count">0/8 players joined (min 1 to start)</p>
+    <button id="start-btn" onclick="startMatch()">Start Battle</button>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-container">
+    <canvas id="arena"></canvas>
+  </div>
+
+  <div id="hud-overlay"></div>
+
+  <!-- EVENT BANNER -->
+  <div id="event-banner"></div>
+
+  <!-- GAME OVER -->
+  <div id="game-over">
+    <h1>⚔ Battle Over ⚔</h1>
+    <div id="winner-name"></div>
+    <div id="final-leaderboard"></div>
+  </div>
+
+  <!-- Scripts loaded in order -->
+  <script src="js/network.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/enemy.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/game_loop.js"></script>
+  <script src="js/game_render.js"></script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      initGame();
+      initHost();
+    });
+  </script>
+</body>
+</html>

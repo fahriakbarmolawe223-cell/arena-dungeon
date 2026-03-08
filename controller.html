@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Arena Dungeon — Controller</title>
+  <meta name="description" content="Arena Dungeon mobile controller. Join a game hosted on a PC!">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+
+  <!-- JOIN SCREEN -->
+  <div id="ctrl-join">
+    <h1>⚔ Arena Dungeon ⚔</h1>
+    <input type="text" id="player-name" placeholder="Enter your name" maxlength="12" autocomplete="off">
+
+    <div class="class-select">
+      <button class="class-btn" data-class="knight">
+        <span class="class-icon">⚔️</span>Knight
+      </button>
+      <button class="class-btn" data-class="ranger">
+        <span class="class-icon">🏹</span>Ranger
+      </button>
+      <button class="class-btn" data-class="mage">
+        <span class="class-icon">🔮</span>Mage
+      </button>
+      <button class="class-btn" data-class="rogue">
+        <span class="class-icon">🗡️</span>Rogue
+      </button>
+    </div>
+
+    <button id="join-btn">Join Battle</button>
+  </div>
+
+  <!-- WAITING SCREEN -->
+  <div id="ctrl-waiting">
+    <p>Waiting for host to start...</p>
+  </div>
+
+  <!-- GAME CONTROLLER -->
+  <div id="ctrl-game">
+    <!-- HUD -->
+    <div id="ctrl-hud">
+      <div id="ctrl-hp-bar">
+        <div id="ctrl-hp-fill"></div>
+        <div id="ctrl-hp-text">100/100</div>
+      </div>
+      <div id="ctrl-level">Lv.1</div>
+      <div id="ctrl-exp-bar">
+        <div id="ctrl-exp-fill"></div>
+      </div>
+    </div>
+
+    <!-- Joystick Zone -->
+    <div id="joystick-zone">
+      <div id="joystick-base">
+        <div id="joystick-stick"></div>
+      </div>
+    </div>
+
+    <!-- Ability Buttons -->
+    <div id="ability-zone">
+      <button class="ability-btn" id="ability-1">
+        <span class="ability-icon">🛡️</span>
+        <span class="ability-label">Skill 1</span>
+        <div class="cd-overlay"></div>
+      </button>
+      <button class="ability-btn" id="ability-2">
+        <span class="ability-icon">💨</span>
+        <span class="ability-label">Skill 2</span>
+        <div class="cd-overlay"></div>
+      </button>
+      <button class="ability-btn" id="ability-3">
+        <span class="ability-icon">🌀</span>
+        <span class="ability-label">Ultimate</span>
+        <div class="cd-overlay"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- DEAD OVERLAY -->
+  <div id="ctrl-dead">
+    <h2>💀 You Died</h2>
+    <p id="respawn-timer">Respawning...</p>
+  </div>
+
+  <!-- LEVEL UP OVERLAY -->
+  <div id="ctrl-levelup">
+    <h2>⬆ Level Up!</h2>
+    <div id="upgrade-choices"></div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="ctrl-gameover">
+    <h1>Game Over</h1>
+    <p class="result"></p>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/network.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/controller.js"></script>
+</body>
+</html>
