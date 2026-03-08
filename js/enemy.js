@@ -49,7 +49,8 @@ function createEnemy(type, tileX, tileY) {
     poisonDmg: 0,
     knockbackX: 0,
     knockbackY: 0,
-    hitFlash: 0
+    hitFlash: 0,
+    facingX: 1
   };
 }
 
@@ -87,7 +88,8 @@ function createBoss(playerCount) {
     isBoss: true,
     aoeCd: 5,
     aoeTimer: 0,
-    aoeWarning: 0
+    aoeWarning: 0,
+    facingX: 1
   };
 }
 
@@ -146,6 +148,8 @@ function updateEnemy(enemy, players, dt, map) {
     // Move toward target
     const dx = nearest.x - enemy.x;
     const dy = nearest.y - enemy.y;
+
+    enemy.facingX = dx < 0 ? -1 : 1;
     const spd = enemy.speed * (enemy.slowed ? (1 - enemy.slowAmount) : 1);
     const mx = (dx / nearestDist) * spd * dt * 60;
     const my = (dy / nearestDist) * spd * dt * 60;
