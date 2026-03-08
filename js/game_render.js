@@ -354,13 +354,26 @@ function renderTraps() {
 function renderEnemyEntities() {
   for (const e of enemies) {
     if (e.dead) continue;
-    ctx.fillStyle = e.hitFlash > 0 ? '#fff' : e.color;
-    ctx.beginPath();
-    ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    
+    if (ASSETS[e.type] && ASSETS[e.type].complete && ASSETS[e.type].naturalWidth) {
+      let imgSize = e.type === 'brute' ? 40 : 32;
+      ctx.drawImage(ASSETS[e.type], e.x - imgSize/2, e.y - imgSize/2, imgSize, imgSize);
+      
+      if (e.hitFlash > 0) {
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      ctx.fillStyle = e.hitFlash > 0 ? '#fff' : e.color;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
     drawHealthBar(ctx, e.x, e.y - e.radius - 8, e.radius * 2, 3, e.hp, e.maxHp, e.color);
   }
 }
@@ -374,13 +387,25 @@ function renderBossEntity() {
     ctx.fillStyle = 'rgba(255,50,0,' + (boss.aoeWarning * 0.3) + ')';
     ctx.fill();
   }
-  ctx.fillStyle = boss.hitFlash > 0 ? '#fff' : boss.color;
-  ctx.beginPath();
-  ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = '#880000';
-  ctx.lineWidth = 3;
-  ctx.stroke();
+  
+  if (ASSETS.boss && ASSETS.boss.complete && ASSETS.boss.naturalWidth) {
+    ctx.drawImage(ASSETS.boss, boss.x - 32, boss.y - 32, 64, 64);
+    if (boss.hitFlash > 0) {
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.beginPath();
+      ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else {
+    ctx.fillStyle = boss.hitFlash > 0 ? '#fff' : boss.color;
+    ctx.beginPath();
+    ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#880000';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+  
   drawHealthBar(ctx, boss.x, boss.y - boss.radius - 12, 50, 5, boss.hp, boss.maxHp, '#ff2200');
   drawNameLabel(ctx, boss.x, boss.y - boss.radius - 16, boss.name, '#ff4444');
 }
@@ -398,19 +423,36 @@ function renderPlayerEntities() {
       ctx.lineWidth = 2;
       ctx.stroke();
     }
+    
     // Player body
-    ctx.fillStyle = p.invincible ? '#fff' : p.color;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    // Facing direction indicator
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(p.x + p.facingX * 7, p.y + p.facingY * 7, 3, 0, Math.PI * 2);
-    ctx.fill();
+    if (ASSETS[p.className] && ASSETS[p.className].complete && ASSETS[p.className].naturalWidth) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      if (p.facingX < 0) ctx.scale(-1, 1);
+      ctx.drawImage(ASSETS[p.className], -16, -16, 32, 32);
+      ctx.restore();
+      
+      if (p.invincible) {
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      ctx.fillStyle = p.invincible ? '#fff' : p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // Facing direction indicator
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(p.x + p.facingX * 7, p.y + p.facingY * 7, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
     ctx.globalAlpha = 1;
     drawHealthBar(ctx, p.x, p.y - p.radius - 10, 26, 4, p.hp, p.maxHp, p.color);
     drawNameLabel(ctx, p.x, p.y - p.radius - 14, p.name + ' Lv' + p.level, p.color);
