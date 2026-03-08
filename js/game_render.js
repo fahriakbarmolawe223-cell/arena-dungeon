@@ -359,7 +359,9 @@ function renderEnemyEntities() {
       let imgSize = e.type === 'brute' ? 40 : 32;
       ctx.save();
       ctx.translate(e.x, e.y);
-      if (e.facingX < 0) ctx.scale(-1, 1);
+      if (e.facingX < 0) {
+        ctx.scale(-1, 1);
+      }
       ctx.drawImage(ASSETS[e.type], -imgSize/2, -imgSize/2, imgSize, imgSize);
       ctx.restore();
       
@@ -395,7 +397,9 @@ function renderBossEntity() {
   if (ASSETS.boss && ASSETS.boss.complete && ASSETS.boss.naturalWidth) {
     ctx.save();
     ctx.translate(boss.x, boss.y);
-    if (boss.facingX < 0) ctx.scale(-1, 1);
+    if (boss.facingX < 0) {
+      ctx.scale(-1, 1);
+    }
     ctx.drawImage(ASSETS.boss, -32, -32, 64, 64);
     ctx.restore();
 
@@ -437,7 +441,9 @@ function renderPlayerEntities() {
     if (ASSETS[p.className] && ASSETS[p.className].complete && ASSETS[p.className].naturalWidth) {
       ctx.save();
       ctx.translate(p.x, p.y);
-      if (p.facingX < 0) ctx.scale(-1, 1);
+      if (p.facingX < 0) {
+        ctx.scale(-1, 1);
+      }
       ctx.drawImage(ASSETS[p.className], -16, -16, 32, 32);
       ctx.restore();
       
