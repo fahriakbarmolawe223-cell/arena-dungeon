@@ -233,6 +233,7 @@ function recalcStats(player) {
  * Check if player has a specific upgrade effect.
  */
 function hasUpgrade(player, effectName) {
+  if (!player.upgrades) return false;
   return player.upgrades.some(u => u.effect === effectName);
 }
 
@@ -240,6 +241,7 @@ function hasUpgrade(player, effectName) {
  * Get sum of upgrade values for a specific effect.
  */
 function getUpgradeValue(player, effectName) {
+  if (!player.upgrades) return 0;
   return player.upgrades
     .filter(u => u.effect === effectName)
     .reduce((sum, u) => sum + u.value, 0);
