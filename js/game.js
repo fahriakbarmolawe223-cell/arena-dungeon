@@ -60,6 +60,20 @@ let network;
 let lastTime = 0;
 
 // ========================================
+// ASSET LOADING
+// ========================================
+const ASSETS = {
+  chest: new Image(),
+  trap: new Image(),
+  wallTile: new Image(),
+  floorTile: new Image()
+};
+ASSETS.chest.src = 'Chest.png';
+ASSETS.trap.src = 'Trap.png';
+ASSETS.wallTile.src = 'Wall Tile.png';
+ASSETS.floorTile.src = 'Floor Tile.png';
+
+// ========================================
 // INITIALIZATION
 // ========================================
 
