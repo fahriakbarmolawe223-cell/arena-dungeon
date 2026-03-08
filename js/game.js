@@ -74,7 +74,7 @@ const ASSETS = {
   rogue: new Image(),
   mage: new Image(),
   ranger: new Image(),
-  warrior: new Image()
+  knight: new Image()
 };
 ASSETS.chest.src = 'Chest.png';
 ASSETS.trap.src = 'Trap.png';
@@ -87,7 +87,7 @@ ASSETS.skeleton.src = 'Skeleton.png';
 ASSETS.rogue.src = 'Rogue.png';
 ASSETS.mage.src = 'Mage.png';
 ASSETS.ranger.src = 'Ranger.png';
-ASSETS.warrior.src = 'Warrior.png';
+ASSETS.knight.src = 'Warrior.png';
 
 // ========================================
 // INITIALIZATION
