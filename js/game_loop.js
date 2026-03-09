@@ -24,6 +24,9 @@ function update(dt) {
   updateAllProjectiles(dt);
   updateTraps(dt);
   updateChestSpawns(dt);
+  if (gameMode === 'dungeon') {
+    updateDungeonVisibility();
+  }
   updateBossSpawn(dt);
   updateEventSystem(dt);
   updateParticles(dt);
@@ -51,6 +54,11 @@ function updateAllPlayers(dt) {
       if (p.poisonTimer <= 0) p.poisoned = false;
     }
     if (p.slowed) { p.slowTimer -= dt; if (p.slowTimer <= 0) { p.slowed = false; p.slowAmount = 0; } }
+
+    if (gameMode === 'dungeon') {
+      p.torchLevel -= dt; // 1% per second
+      if (p.torchLevel < 0) p.torchLevel = 0;
+    }
 
     // Ability cooldowns
     for (const a of p.abilities) { if (a.currentCd > 0) a.currentCd -= dt; }
