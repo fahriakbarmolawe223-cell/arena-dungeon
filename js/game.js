@@ -9,36 +9,39 @@ const CANVAS_W = MAP_COLS * TILE;
 const CANVAS_H = MAP_ROWS * TILE;
 const MATCH_DURATION = 300; // 5 minutes
 
-// Dungeon map: 0=floor, 1=wall
-const GAME_MAP = [
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
-  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1],
-  [1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1],
-  [1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
-  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
-  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+const BASE_ARENA_MAP = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
+// Dungeon map: 0=floor, 1=wall
+let GAME_MAP = JSON.parse(JSON.stringify(BASE_ARENA_MAP));
+
 // Game state
+let gameMode = 'arena'; // arena | dungeon
 let gamePhase = 'lobby'; // lobby | playing | ended
 let matchTimer = MATCH_DURATION;
 let players = new Map();
@@ -54,6 +57,7 @@ let nextBossTime = 120;
 let nextEventTime = 60;
 let enemySpawnTimer = 3;
 let playerSpawnIndex = 0;
+let visibilityMap = []; // For dungeon mode
 
 let canvas, ctx;
 let network;
@@ -179,6 +183,52 @@ function onPlayerMessage(peerId, data) {
       }
       break;
     }
+    case 'interact': {
+      if (gameMode !== 'dungeon') return;
+      const p = players.get(peerId);
+      if (!p || p.dead) return;
+      
+      // Basic interact check (e.g. open chest)
+      for (let i = chests.length - 1; i >= 0; i--) {
+        const c = chests[i];
+        const dx = p.x - c.x, dy = p.y - c.y;
+        if (dx * dx + dy * dy < 1600) { // 40px radius
+          collectChest(p, c);
+          chests.splice(i, 1);
+          break; // Only interact with one thing
+        }
+      }
+      break;
+    }
+    case 'use_item': {
+      if (gameMode !== 'dungeon') return;
+      const p = players.get(peerId);
+      if (!p || p.dead) return;
+      const slot = data.slot - 1; // 0-indexed
+      if (p.inventory[slot] > 0) {
+        if (slot === 0) { // Torch
+          p.torchLevel = Math.min(100, p.torchLevel + 50);
+          p.inventory[0]--;
+          addParticle(p.x, p.y, '#ffaa00', 10, 2, 0.5);
+        } else if (slot === 1) { // Potion
+          p.hp = Math.min(p.maxHp, p.hp + p.maxHp * 0.5);
+          p.inventory[1]--;
+          addParticle(p.x, p.y, '#44ff44', 10, 2, 0.5);
+        }
+      }
+      break;
+    }
+    case 'shake': {
+      if (gameMode !== 'dungeon') return;
+      const p = players.get(peerId);
+      if (!p || p.dead) return;
+      if (p.torchLevel < 50) {
+        p.torchLevel = Math.min(100, p.torchLevel + 10);
+        addParticle(p.x, p.y, '#ffaa00', 5, 2, 0.5);
+        addDamageNumber(p.x, p.y - 10, '+Torch', '#ffaa00');
+      }
+      break;
+    }
   }
 }
 
@@ -214,15 +264,100 @@ function startMatch() {
   gamePhase = 'playing';
   matchTimer = MATCH_DURATION;
 
+  const modeSelect = document.getElementById('game-mode');
+  gameMode = modeSelect ? modeSelect.value : 'arena';
+
   document.getElementById('lobby').style.display = 'none';
   document.getElementById('game-container').className = 'active';
   document.getElementById('hud-overlay').className = 'active';
 
-  network.broadcast({ type: 'start' });
+  // Setup Map Based on Mode
+  if (gameMode === 'dungeon') {
+    generateDungeonMap();
+  } else {
+    // Reset to base Arena Map if replaying (GAME_MAP is currently a const, we'll redefine it in a bit)
+    GAME_MAP = JSON.parse(JSON.stringify(BASE_ARENA_MAP));
+  }
+
+  // Respawn everyone taking new map into consideration
+  for (const [id, p] of players) {
+    respawnPlayer(p);
+  }
+
+  network.broadcast({ type: 'start', mode: gameMode });
 
   // Initial enemy spawn
   for (let i = 0; i < 6 + players.size * 2; i++) spawnEnemy();
 
   lastTime = performance.now();
   requestAnimationFrame(gameLoop);
+}
+
+// ========================================
+// MAP GENERATION
+// ========================================
+
+function generateDungeonMap() {
+  // Initialize filled with walls
+  for (let r = 0; r < MAP_ROWS; r++) {
+    for (let c = 0; c < MAP_COLS; c++) {
+      GAME_MAP[r][c] = 1;
+    }
+  }
+
+  // Create visibility map initialized to 0 (unknown)
+  visibilityMap = Array(MAP_ROWS).fill(0).map(() => Array(MAP_COLS).fill(0));
+
+  const rooms = [];
+  const numRooms = 12 + Math.floor(Math.random() * 4); // 12-15 rooms
+
+  // Helper to check standard overlap
+  const isValidRoom = (r, c, w, h) => {
+    if (r < 1 || c < 1 || r + h > MAP_ROWS - 2 || c + w > MAP_COLS - 2) return false;
+    for (const room of rooms) {
+      if (r < room.r + room.h + 2 && r + h + 2 > room.r &&
+          c < room.c + room.w + 2 && c + w + 2 > room.c) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Generate rooms
+  for (let i = 0; i < 50 && rooms.length < numRooms; i++) {
+    const w = 4 + Math.floor(Math.random() * 4);
+    const h = 4 + Math.floor(Math.random() * 4);
+    const r = 2 + Math.floor(Math.random() * (MAP_ROWS - h - 4));
+    const c = 2 + Math.floor(Math.random() * (MAP_COLS - w - 4));
+
+    if (isValidRoom(r, c, w, h)) {
+      rooms.push({ r, c, w, h, x: Math.floor(c + w/2), y: Math.floor(r + h/2) });
+      for (let rr = r; rr < r + h; rr++) {
+        for (let cc = c; cc < c + w; cc++) {
+          GAME_MAP[rr][cc] = 0;
+        }
+      }
+    }
+  }
+
+  // Connect rooms with corridors
+  for (let i = 1; i < rooms.length; i++) {
+    const prev = rooms[i - 1];
+    const curr = rooms[i];
+    
+    // Horizontal then vertical
+    let r1 = prev.y, c1 = prev.x;
+    let r2 = curr.y, c2 = curr.x;
+
+    while (c1 !== c2) {
+      GAME_MAP[r1][c1] = 0;
+      GAME_MAP[r1 + 1][c1] = 0; // 2 tile wide corridors
+      c1 += (c2 > c1) ? 1 : -1;
+    }
+    while (r1 !== r2) {
+      GAME_MAP[r1][c1] = 0;
+      GAME_MAP[r1][c1 + 1] = 0;
+      r1 += (r2 > r1) ? 1 : -1;
+    }
+  }
 }
