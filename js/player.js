@@ -78,7 +78,14 @@ const UPGRADES = [
  */
 function createPlayer(peerId, name, className, spawnIndex) {
   const cd = CLASS_DATA[className];
-  const sp = SPAWN_POINTS[spawnIndex % SPAWN_POINTS.length];
+  
+  let validSpawn;
+  if (typeof gameMode !== 'undefined' && gameMode === 'dungeon') {
+    validSpawn = getRandomFloorTile(GAME_MAP);
+  } else {
+    validSpawn = SPAWN_POINTS[spawnIndex % SPAWN_POINTS.length];
+  }
+
   return {
     id: peerId,
     name: name || 'Player',
@@ -86,8 +93,8 @@ function createPlayer(peerId, name, className, spawnIndex) {
     color: cd.color,
 
     // Position & movement
-    x: sp.x * 32 + 16,
-    y: sp.y * 32 + 16,
+    x: validSpawn.x * 32 + 16,
+    y: validSpawn.y * 32 + 16,
     radius: 12,
     moveX: 0,
     moveY: 0,
@@ -137,6 +144,8 @@ function createPlayer(peerId, name, className, spawnIndex) {
     slowed: false,
     slowTimer: 0,
     slowAmount: 0,
+    torchLevel: 100,
+    inventory: [1, 0, 0, 0], // [Torch, Potion, Key, Artifact]
 
     // Input state (from controller)
     inputMX: 0,
@@ -270,9 +279,15 @@ function calcDamage(player, baseDmg) {
  * Respawn a player at a random spawn point.
  */
 function respawnPlayer(player) {
-  const sp = SPAWN_POINTS[Math.floor(Math.random() * SPAWN_POINTS.length)];
-  player.x = sp.x * 32 + 16;
-  player.y = sp.y * 32 + 16;
+  let validSpawn;
+  if (typeof gameMode !== 'undefined' && gameMode === 'dungeon') {
+    validSpawn = getRandomFloorTile(GAME_MAP);
+  } else {
+    validSpawn = SPAWN_POINTS[Math.floor(Math.random() * SPAWN_POINTS.length)];
+  }
+
+  player.x = validSpawn.x * 32 + 16;
+  player.y = validSpawn.y * 32 + 16;
   player.dead = false;
   player.hp = player.maxHp;
   player.respawnTimer = 0;
