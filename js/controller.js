@@ -55,7 +55,63 @@ document.addEventListener('DOMContentLoaded', () => {
   zone.addEventListener('touchmove', onJoystickMove, { passive: false });
   zone.addEventListener('touchend', onJoystickEnd, { passive: false });
   zone.addEventListener('touchcancel', onJoystickEnd, { passive: false });
+
+  // Dungeon Buttons
+  const interactBtn = document.getElementById('interact-btn');
+  if (interactBtn) {
+    interactBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (!gameStarted) return;
+      ctrlNetwork.send({ type: 'interact' });
+    });
+  }
+
+  document.querySelectorAll('.inv-slot').forEach(slot => {
+    slot.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (!gameStarted) return;
+      const slotIndex = parseInt(slot.dataset.slot);
+      ctrlNetwork.send({ type: 'use_item', slot: slotIndex });
+    });
+  });
 });
+
+let lastShakeTime = 0;
+let lastX = null, lastY = null, lastZ = null;
+
+function startShakeDetection() {
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+    DeviceMotionEvent.requestPermission().then(permissionState => {
+      if (permissionState === 'granted') {
+        window.addEventListener('devicemotion', handleMotion);
+      }
+    }).catch(console.error);
+  } else {
+    // Non-iOS 13+ devices
+    window.addEventListener('devicemotion', handleMotion);
+  }
+}
+
+function handleMotion(event) {
+  if (!gameStarted || !ctrlNetwork) return;
+  const acc = event.accelerationIncludingGravity;
+  if (!acc) return;
+
+  if (lastX !== null) {
+    const deltaX = Math.abs(lastX - acc.x);
+    const deltaY = Math.abs(lastY - acc.y);
+    const deltaZ = Math.abs(lastZ - acc.z);
+
+    if (deltaX + deltaY + deltaZ > 25) { // Shake threshold
+      const now = Date.now();
+      if (now - lastShakeTime > 1000) { // Limit to 1 shake per sec
+        lastShakeTime = now;
+        ctrlNetwork.send({ type: 'shake' });
+      }
+    }
+  }
+  lastX = acc.x; lastY = acc.y; lastZ = acc.z;
+}
 
 function updateJoinButton() {
   const name = document.getElementById('player-name').value.trim();
@@ -111,8 +167,13 @@ function handleHostMessage(data) {
       break;
     case 'start':
       gameStarted = true;
+      document.body.className = 'mode-' + data.mode;
       document.getElementById('ctrl-waiting').className = '';
       document.getElementById('ctrl-game').className = 'active';
+
+      if (data.mode === 'dungeon') {
+        startShakeDetection();
+      }
       break;
     case 'state':
       updateControllerHUD(data);
@@ -146,6 +207,27 @@ function updateControllerHUD(data) {
 
   const expPct = data.expToNext > 0 ? (data.exp / data.expToNext) * 100 : 0;
   document.getElementById('ctrl-exp-fill').style.width = expPct + '%';
+
+  if (data.mode === 'dungeon' || document.body.classList.contains('mode-dungeon')) {
+    const alert = document.getElementById('ctrl-torch-alert');
+    if (data.torchLevel < 20) {
+      alert.classList.add('visible');
+    } else {
+      alert.classList.remove('visible');
+    }
+
+    // Update inventory slots if data.inventory exists
+    if (data.inventory) {
+       for(let i=1; i<=4; i++) {
+         const countEl = document.querySelector('#inv-slot-' + i + ' .inv-count');
+         if (countEl) {
+           const count = data.inventory[i-1] || 0;
+           countEl.textContent = count;
+           countEl.className = count > 0 ? 'inv-count' : 'inv-count empty';
+         }
+       }
+    }
+  }
 
   // Cooldowns
   document.querySelectorAll('.ability-btn').forEach((btn, i) => {
