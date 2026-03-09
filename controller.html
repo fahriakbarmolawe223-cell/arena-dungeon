@@ -51,6 +51,35 @@
         <div id="ctrl-exp-fill"></div>
       </div>
     </div>
+    
+    <!-- Torch Alert Indicator (Dungeon Only) -->
+    <div id="ctrl-torch-alert" class="dungeon-only">
+      <span>🔥 Shake Phone to Relight Torch! 🔥</span>
+    </div>
+
+    <!-- Inventory Zone (Dungeon Only) -->
+    <div id="inventory-zone" class="dungeon-only">
+      <div class="inv-slot" data-slot="1" id="inv-slot-1">
+        <div class="inv-icon">🔥</div>
+        <div class="inv-label">Torch</div>
+        <div class="inv-count">0</div>
+      </div>
+      <div class="inv-slot" data-slot="2" id="inv-slot-2">
+        <div class="inv-icon">🧪</div>
+        <div class="inv-label">Potion</div>
+        <div class="inv-count">0</div>
+      </div>
+      <div class="inv-slot" data-slot="3" id="inv-slot-3">
+        <div class="inv-icon">🗝️</div>
+        <div class="inv-label">Key</div>
+        <div class="inv-count">0</div>
+      </div>
+      <div class="inv-slot" data-slot="4" id="inv-slot-4">
+        <div class="inv-icon">💎</div>
+        <div class="inv-label">Artifact</div>
+        <div class="inv-count">0</div>
+      </div>
+    </div>
 
     <!-- Joystick Zone -->
     <div id="joystick-zone">
@@ -61,17 +90,22 @@
 
     <!-- Ability Buttons -->
     <div id="ability-zone">
-      <button class="ability-btn" id="ability-1">
+      <button class="ability-btn dungeon-only" id="interact-btn">
+        <span class="ability-icon">✋</span>
+        <span class="ability-label">Interact</span>
+      </button>
+
+      <button class="ability-btn arena-only" id="ability-1">
         <span class="ability-icon">🛡️</span>
         <span class="ability-label">Skill 1</span>
         <div class="cd-overlay"></div>
       </button>
-      <button class="ability-btn" id="ability-2">
+      <button class="ability-btn arena-only" id="ability-2">
         <span class="ability-icon">💨</span>
         <span class="ability-label">Skill 2</span>
         <div class="cd-overlay"></div>
       </button>
-      <button class="ability-btn" id="ability-3">
+      <button class="ability-btn arena-only" id="ability-3">
         <span class="ability-icon">🌀</span>
         <span class="ability-label">Ultimate</span>
         <div class="cd-overlay"></div>
