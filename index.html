@@ -18,6 +18,13 @@
     <div id="qr-container"></div>
     <div id="room-code"><span>ROOM CODE</span>...</div>
     <p id="connection-status">Connecting to signaling server...</p>
+    <div style="margin: 15px 0;">
+      <label for="game-mode" style="color: #f0c040; font-size: 1.2rem; margin-right: 10px;">Mode:</label>
+      <select id="game-mode" style="padding: 5px 10px; font-size: 1rem; border-radius: 5px; background: #2a1a10; color: #fff; border: 1px solid #f0c040;">
+        <option value="arena">Arena (Competitive)</option>
+        <option value="dungeon">Dungeon (Co-op Exploration)</option>
+      </select>
+    </div>
     <div id="player-list"></div>
     <p id="player-count">0/8 players joined (min 1 to start)</p>
     <button id="start-btn" onclick="startMatch()">Start Battle</button>
