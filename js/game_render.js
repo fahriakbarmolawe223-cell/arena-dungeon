@@ -258,7 +258,11 @@ function render() {
   renderParticles(ctx);
   renderDamageNumbers(ctx);
 
-  // Dark Fog event
+  if (typeof gameMode !== 'undefined' && gameMode === 'dungeon') {
+    renderDungeonLighting();
+  }
+
+  // Dark Fog event (applies to both modes if the event triggers)
   if (currentEvent === 'Dark Fog') {
     ctx.fillStyle = 'rgba(0,0,0,0.7)';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
@@ -287,10 +291,68 @@ function render() {
   if (currentEvent) renderEventBanner(ctx, currentEvent, CANVAS_W);
 }
 
+function isVisibleInDungeon(x, y) {
+  if (typeof gameMode !== 'undefined' && gameMode === 'dungeon' && visibilityMap) {
+    const r = Math.floor(y / TILE);
+    const c = Math.floor(x / TILE);
+    if (r >= 0 && r < MAP_ROWS && c >= 0 && c < MAP_COLS) {
+      return visibilityMap[r][c] > 0; // Discovered or currently visible
+    }
+    return false;
+  }
+  return true; // Not dungeon mode, so always visible
+}
+
+function renderDungeonLighting() {
+  ctx.save();
+  // Draw darkness overlay
+  ctx.fillStyle = 'rgba(0,0,0,0.92)'; // nearly pitch black
+  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+  // Cut out light holes for each player using destination-out
+  ctx.globalCompositeOperation = 'destination-out';
+  for (const [, p] of players) {
+    if (p.dead) continue;
+    // Base radius + based on torch level
+    const lightRadius = 60 + Math.floor((p.torchLevel / 100) * 120);
+    const grad = ctx.createRadialGradient(p.x, p.y, 20, p.x, p.y, lightRadius);
+    grad.addColorStop(0, 'rgba(0,0,0,1)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, lightRadius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Slight flicker effect inner
+    if (Math.random() < 0.2) {
+      ctx.fillStyle = 'rgba(0,0,0,0.1)';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.random() * 40, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
 function renderMap() {
+  const isDungeon = typeof gameMode !== 'undefined' && gameMode === 'dungeon';
+
   for (let r = 0; r < MAP_ROWS; r++) {
     for (let c = 0; c < MAP_COLS; c++) {
       const x = c * TILE, y = r * TILE;
+      
+      let vis = 2; // Default to visible
+      if (isDungeon && visibilityMap) {
+        vis = visibilityMap[r][c];
+      }
+
+      // If completely unknown, draw pure black and skip tile logic
+      if (vis === 0) {
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(x, y, TILE, TILE);
+        continue;
+      }
+
       if (GAME_MAP[r][c] === 1) {
         if (ASSETS.wallTile.complete && ASSETS.wallTile.naturalWidth) {
           ctx.drawImage(ASSETS.wallTile, x, y, TILE, TILE);
@@ -314,12 +376,19 @@ function renderMap() {
           ctx.fillRect(x + 1, y + 1, TILE - 2, TILE - 2);
         }
       }
+
+      // Draw explored but not visible dark overlay
+      if (vis === 1) {
+        ctx.fillStyle = 'rgba(0,0,0,0.6)'; // Makes it apparent it's explored but out of sight
+        ctx.fillRect(x, y, TILE, TILE);
+      }
     }
   }
 }
 
 function renderChests() {
   for (const c of chests) {
+    if (!isVisibleInDungeon(c.x, c.y)) continue;
     if (ASSETS.chest.complete && ASSETS.chest.naturalWidth) {
       // Draw 32x32 image centered at c.x, c.y
       ctx.drawImage(ASSETS.chest, c.x - 16, c.y - 16, 32, 32);
@@ -336,6 +405,7 @@ function renderChests() {
 
 function renderTraps() {
   for (const t of traps) {
+    if (!isVisibleInDungeon(t.x, t.y)) continue;
     if (ASSETS.trap.complete && ASSETS.trap.naturalWidth) {
       // Draw 32x32 image centered at t.x, t.y
       ctx.drawImage(ASSETS.trap, t.x - 16, t.y - 16, 32, 32);
@@ -354,6 +424,7 @@ function renderTraps() {
 function renderEnemyEntities() {
   for (const e of enemies) {
     if (e.dead) continue;
+    if (!isVisibleInDungeon(e.x, e.y)) continue;
 
     if (ASSETS[e.type] && ASSETS[e.type].complete && ASSETS[e.type].naturalWidth) {
       let imgSize = e.type === 'brute' ? 40 : 32;
@@ -385,6 +456,8 @@ function renderEnemyEntities() {
 
 function renderBossEntity() {
   if (!boss || boss.dead) return;
+  if (!isVisibleInDungeon(boss.x, boss.y)) return;
+  
   // AoE warning
   if (boss.aoeWarning > 0) {
     ctx.beginPath();
